@@ -1,0 +1,17 @@
+Rule,Status,Message
+DQ-01,PASS,Company IDs are unique
+DQ-02,FAIL,13 duplicate records
+DQ-03,FAIL,99 invalid company IDs
+DQ-04,FAIL,1 invalid sales
+DQ-05,PASS,Balance Sheet matched
+DQ-06,FAIL,1276 invalid years
+DQ-07,PASS,Ticker format valid
+DQ-08,FAIL,1 mismatched rows
+DQ-09,PASS,Fixed assets valid
+DQ-10,FAIL,68 invalid tax values
+DQ-11,FAIL,50 invalid dividend values
+DQ-12,FAIL,5 invalid EPS values
+DQ-13,FAIL,1 invalid URLs
+DQ-14,SKIP,annual_report column not found
+DQ-15,PASS,Company names available
+DQ-16,PASS,No duplicate company names

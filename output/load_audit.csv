@@ -1,0 +1,13 @@
+File,Status,Rows,Message
+companies.xlsx,PASS,92,Loaded Successfully
+analysis.xlsx,PASS,20,Loaded Successfully
+balancesheet.xlsx,PASS,1312,Loaded Successfully
+cashflow.xlsx,PASS,1187,Loaded Successfully
+documents.xlsx,PASS,1585,Loaded Successfully
+profitandloss.xlsx,PASS,1276,Loaded Successfully
+prosandcons.xlsx,PASS,16,Loaded Successfully
+financial_ratios.xlsx,PASS,1183,Loaded Successfully
+market_cap.xlsx,PASS,551,Loaded Successfully
+peer_groups.xlsx,PASS,55,Loaded Successfully
+sectors.xlsx,PASS,91,Loaded Successfully
+stock_prices.xlsx,PASS,5519,Loaded Successfully
