@@ -12,7 +12,10 @@ ratios:
 	python src/analytics/ratios.py
 
 screener:
-	python src/analytics/screener.py
+	python src/screener/engine.py
+
+peer:
+	python src/analytics/peer.py
 
 test:
 	python -m pytest
@@ -21,10 +24,7 @@ report:
 	type output\validation_failures.csv
 
 dashboard:
-	echo Dashboard module coming in Sprint 2
-
-api:
-	echo API module coming in Sprint 3
+	echo Dashboard module coming in future sprint
 
 clean:
 	del /Q db\*.db
