@@ -1,19 +1,25 @@
 # Nifty100 Financial Intelligence Platform
 
-A financial analytics platform developed as part of the **Bluestock Data Analysis Internship**. The project analyzes Nifty 100 companies using ETL pipelines, financial ratios, screening engines, peer comparisons, and automated reporting.
+A financial analytics platform developed as part of the **Bluestock Data Analysis Internship**. The project analyzes Nifty 100 companies using ETL pipelines, financial ratios, screening engines, peer comparisons, valuation analysis, and an interactive Streamlit dashboard.
+
+---
 
 ## Features
 
-- ETL pipeline for loading and validating financial data
-- Financial ratio calculation and analysis
-- Financial screener with 6 preset screeners
-- Custom threshold-based filtering
-- Composite quality score calculation
-- Peer percentile ranking across industry groups
-- Radar chart generation for peer comparison
-- Excel report generation
+- ETL pipeline for loading and validating financial datasets
 - SQLite database integration
-- Automated testing with Pytest
+- Financial ratio calculation and analysis
+- Interactive Streamlit dashboard (8 modules)
+- Financial screener with preset and custom filters
+- Company profile and trend analysis
+- Peer comparison dashboard
+- Sector analysis
+- Capital allocation analysis
+- Valuation module with valuation flags
+- CSV and Excel report generation
+- Automated testing using Pytest
+
+---
 
 ## Project Structure
 
@@ -28,11 +34,17 @@ Nifty100_Project/
 ├── output/
 ├── reports/
 ├── src/
+│   ├── analytics/
+│   ├── dashboard/
+│   ├── etl/
+│   └── screener/
 ├── tests/
-├── Makefile
 ├── requirements.txt
-└── README.md
+├── README.md
+└── Makefile
 ```
+
+---
 
 ## Technologies Used
 
@@ -40,29 +52,66 @@ Nifty100_Project/
 - Pandas
 - NumPy
 - SQLite
+- Streamlit
+- Plotly
 - Matplotlib
 - OpenPyXL
 - Pytest
+- Git & GitHub
+
+---
+
+## Dashboard Modules
+
+- Home Dashboard
+- Company Profile
+- Stock Screener
+- Peer Comparison
+- Trend Analysis
+- Sector Analysis
+- Capital Allocation
+- Reports
+
+---
 
 ## Outputs Generated
 
 - `output/screener_output.xlsx`
 - `output/peer_comparison.xlsx`
-- `reports/radar_charts/`
-- SQLite database with peer percentile rankings
+- `output/valuation_summary.xlsx`
+- `output/valuation_flags.csv`
+- SQLite database (`db/nifty100.db`)
 
-## Testing
+---
 
-Run all tests:
+## Run the Dashboard
+
+```bash
+streamlit run app.py
+```
+
+---
+
+## Run the Valuation Module
+
+```bash
+python src/analytics/valuation.py
+```
+
+---
+
+## Run Tests
 
 ```bash
 python -m pytest
 ```
 
-All tests passed successfully.
+---
 
 ## Author
 
 **Pavan Kumar Katkuri**
 
+
 Bluestock Data Analysis Internship – Nifty100 Financial Intelligence Platform
+
