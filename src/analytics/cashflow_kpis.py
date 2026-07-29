@@ -2,186 +2,93 @@ import os
 import sqlite3
 import pandas as pd
 
-# ----------------------------
-# Database
-# ----------------------------
+DB = "db/nifty100.db"
 
-DB_PATH = os.path.join("db", "nifty100.db")
+os.makedirs("output", exist_ok=True)
 
-connection = sqlite3.connect(DB_PATH)
+conn = sqlite3.connect(DB)
 
-print("Connected to SQLite Database!")
+cf = pd.read_sql("SELECT * FROM cashflow", conn)
+pl = pd.read_sql("SELECT * FROM profitandloss", conn)
+companies = pd.read_sql("SELECT * FROM companies", conn)
 
-# ----------------------------
-# Load Tables
-# ----------------------------
+conn.close()
 
-profit = pd.read_sql(
-    "SELECT * FROM profitandloss",
-    connection
-)
+# Normalize column names
+cf.columns = cf.columns.str.strip().str.lower().str.replace(" ", "_")
+pl.columns = pl.columns.str.strip().str.lower().str.replace(" ", "_")
+companies.columns = companies.columns.str.strip().str.lower().str.replace(" ", "_")
 
-cashflow = pd.read_sql(
-    "SELECT * FROM cashflow",
-    connection
-)
-
-print("\nTables Loaded Successfully!")
-
-print("Profit & Loss :", len(profit))
-print("Cash Flow :", len(cashflow))
-
-# ----------------------------
-# Merge Tables
-# ----------------------------
-
-df = profit.merge(
-    cashflow,
+data = cf.merge(
+    pl,
     on=["company_id", "year"],
     how="left"
 )
 
-print("\nCalculating Cash Flow KPIs...\n")
-# ----------------------------
-# Free Cash Flow
-# ----------------------------
+results = []
 
-df["free_cash_flow"] = (
-    df["operating_activity"] +
-    df["investing_activity"]
-)
+for company in data["company_id"].unique():
 
-# ----------------------------
-# CFO Quality
-# ----------------------------
+    df = data[data["company_id"] == company].sort_values("year")
 
-df["cfo_quality"] = df.apply(
-    lambda x: None
-    if x["net_profit"] == 0
-    else round(
-        x["operating_activity"] / x["net_profit"],
-        2
-    ),
-    axis=1
-)
+    latest = df.iloc[-1]
 
-# ----------------------------
-# CFO Quality Label
-# ----------------------------
+    cfo = latest["operating_activity"]
+    cff = latest["financing_activity"]
+    sales = latest["sales"]
+    profit = latest["net_profit"]
 
-def quality_label(value):
-
-    if pd.isna(value):
-        return None
-
-    if value > 1:
-        return "High Quality"
-
-    elif value >= 0.5:
-        return "Moderate"
-
+    if profit != 0:
+        cfo_quality = cfo / profit
     else:
-        return "Accrual Risk"
+        cfo_quality = 0
 
+    if cfo_quality > 1:
+        quality = "High Quality"
+    elif cfo_quality >= 0.5:
+        quality = "Moderate"
+    else:
+        quality = "Accrual Risk"
 
-df["cfo_quality_label"] = df["cfo_quality"].apply(
-    quality_label
-)
+    capex = abs(latest["investing_activity"])
 
-# ----------------------------
-# CapEx Intensity
-# ----------------------------
+    if sales != 0:
+        capex_pct = capex / sales * 100
+    else:
+        capex_pct = 0
 
-df["capex_intensity"] = df.apply(
-    lambda x: None
-    if x["sales"] == 0
-    else abs(x["investing_activity"]) /
-         x["sales"] * 100,
-    axis=1
-)
+    if capex_pct < 3:
+        capex_label = "Asset Light"
+    elif capex_pct <= 8:
+        capex_label = "Moderate"
+    else:
+        capex_label = "Capital Intensive"
 
-# ----------------------------
-# FCF Conversion
-# ----------------------------
+    distress = (
+        cfo < 0 and
+        cff > 0
+    )
 
-df["fcf_conversion"] = df.apply(
-    lambda x: None
-    if x["operating_profit"] == 0
-    else (
-        x["free_cash_flow"] /
-        x["operating_profit"]
-    ) * 100,
-    axis=1
-)
+    results.append({
+        "company_id": company,
+        "cfo_quality_score": round(cfo_quality, 2),
+        "cfo_quality_label": quality,
+        "capex_intensity_pct": round(capex_pct, 2),
+        "capex_label": capex_label,
+        "distress_flag": distress
+    })
 
-# ----------------------------
-# Capital Allocation Pattern
-# ----------------------------
+result = pd.DataFrame(results)
 
-def sign(v):
-    if pd.isna(v):
-        return "0"
-    return "+" if v >= 0 else "-"
-
-
-def pattern(row):
-
-    cfo = sign(row["operating_activity"])
-    cfi = sign(row["investing_activity"])
-    cff = sign(row["financing_activity"])
-
-    key = (cfo, cfi, cff)
-
-    patterns = {
-        ("+", "-", "-"): "Reinvestor",
-        ("+", "+", "-"): "Liquidating Assets",
-        ("-", "+", "+"): "Distress Signal",
-        ("-", "-", "+"): "Growth Funded by Debt",
-        ("+", "+", "+"): "Cash Accumulator",
-        ("-", "-", "-"): "Pre-Revenue",
-        ("+", "-", "+"): "Mixed"
-    }
-
-    return patterns.get(key, "Other")
-
-
-df["capital_pattern"] = df.apply(
-    pattern,
-    axis=1
-)
-
-# ----------------------------
-# Save CSV
-# ----------------------------
-
-os.makedirs("output", exist_ok=True)
-
-df[
-    [
-        "company_id",
-        "year",
-        "free_cash_flow",
-        "cfo_quality",
-        "cfo_quality_label",
-        "capex_intensity",
-        "fcf_conversion",
-        "capital_pattern"
-    ]
-].to_csv(
-    "output/capital_allocation.csv",
+result.to_excel(
+    "output/cashflow_intelligence.xlsx",
     index=False
 )
 
-print(df[
-    [
-        "company_id",
-        "year",
-        "free_cash_flow",
-        "capital_pattern"
-    ]
-].head())
+result[result["distress_flag"]].to_csv(
+    "output/distress_alerts.csv",
+    index=False
+)
 
-connection.close()
-
-print("\ncapital_allocation.csv created successfully!")
-print("Day 11 Completed Successfully!")
+print("Cash Flow Intelligence Generated")
+print(result.head())

@@ -1,90 +1,114 @@
 # Nifty100 Financial Intelligence Platform
 
-A financial analytics platform developed as part of the **Bluestock Data Analysis Internship**. The project analyzes Nifty 100 companies using ETL pipelines, financial ratios, screening engines, peer comparisons, valuation analysis, and an interactive Streamlit dashboard.
+A financial analytics platform developed as part of the **Bluestock Data Analysis Internship**.
+
+The project analyzes Nifty 100 companies using ETL pipelines, financial ratios, valuation analytics, cash flow intelligence, NLP-based insights, and an interactive Streamlit dashboard.
 
 ---
 
 ## Features
 
-- ETL pipeline for loading and validating financial datasets
-- SQLite database integration
-- Financial ratio calculation and analysis
-- Interactive Streamlit dashboard (8 modules)
-- Financial screener with custom filters
-- Company profile and trend analysis
-- Peer comparison dashboard
-- Sector analysis
-- Capital allocation analysis
-- Valuation module
-- CSV and Excel report generation
-- Automated testing using Pytest
+- ETL Pipeline
+- SQLite Database
+- Financial Ratio Engine
+- Interactive Streamlit Dashboard
+- Company Profile
+- Stock Screener
+- Peer Comparison
+- Trend Analysis
+- Sector Analysis
+- Capital Allocation Analysis
+- Valuation Module
+- Cash Flow Intelligence
+- NLP-Based Pros & Cons Generator
+- PDF Company Tearsheet Generator
+- Sector Reports
+- Portfolio Summary Report
+- CSV / Excel Export
+- Automated Testing
 
 ---
 
-## Project Structure
-
-```text
-Nifty100_Project/
-│
-├── config/
-├── data/
-├── db/
-├── docs/
-├── notebook/
-├── output/
-├── reports/
-├── src/
-│   ├── analytics/
-│   ├── dashboard/
-│   ├── etl/
-│   ├── screener/
-│   └── utils/
-├── tests/
-├── requirements.txt
-├── README.md
-└── Makefile
-```
-
----
-
-## Technologies Used
+## Technologies
 
 - Python
-- Streamlit
 - Pandas
 - NumPy
 - SQLite
+- Streamlit
 - Plotly
 - Matplotlib
+- ReportLab
 - OpenPyXL
 - Pytest
 - Git & GitHub
 
 ---
 
+## Project Structure
+
+```text
+src/
+ ├── analytics/
+ ├── dashboard/
+ ├── etl/
+ ├── nlp/
+ └── reports/
+```
+
+---
+
 ## Dashboard Modules
 
-- 🏠 Home Dashboard
-- 🏢 Company Profile
-- 📊 Stock Screener
-- 👥 Peer Comparison
-- 📈 Trend Analysis
-- 🏭 Sector Analysis
-- 💰 Capital Allocation
-- 📑 Reports
+- Home Dashboard
+- Company Profile
+- Stock Screener
+- Peer Comparison
+- Trend Analysis
+- Sector Analysis
+- Capital Allocation
+- Reports
+
+---
+
+## NLP Modules
+
+- Analysis Text Parser
+- Auto Pros & Cons Generator
+
+---
+
+## Analytics Modules
+
+- Valuation Engine
+- Cash Flow Intelligence
+- Capital Allocation Analysis
+
+---
+
+## Report Generation
+
+- Company Tearsheet PDFs
+- Sector Reports
+- Portfolio Summary PDF
 
 ---
 
 ## Outputs
 
-- `output/screener_output.csv`
-- `output/valuation_summary.xlsx`
-- `output/valuation_flags.csv`
-- SQLite Database: `db/nifty100.db`
+- analysis_parsed.csv
+- parse_failures.csv
+- pros_cons_generated.csv
+- valuation_summary.xlsx
+- valuation_flags.csv
+- cashflow_intelligence.xlsx
+- distress_alerts.csv
+- pattern_changes.csv
+- portfolio_summary.pdf
 
 ---
 
-## Run the Dashboard
+## Run Dashboard
 
 ```bash
 streamlit run app.py
@@ -92,10 +116,30 @@ streamlit run app.py
 
 ---
 
-## Run Valuation Module
+## Run Analytics
 
 ```bash
 python src/analytics/valuation.py
+python src/analytics/cashflow_kpis.py
+```
+
+---
+
+## Run NLP
+
+```bash
+python src/nlp/parser.py
+python src/nlp/pros_cons_generator.py
+```
+
+---
+
+## Run Reports
+
+```bash
+python src/reports/tearsheet.py
+python src/reports/sector_report.py
+python src/reports/portfolio_report.py
 ```
 
 ---
@@ -108,26 +152,9 @@ python -m pytest
 
 ---
 
-## Sprint 4 Deliverables
-
-- ✅ Multi-page Streamlit Dashboard
-- ✅ SQLite Database Integration
-- ✅ Financial Ratio Analytics
-- ✅ Company Profile Dashboard
-- ✅ Stock Screener
-- ✅ Peer Comparison
-- ✅ Trend Analysis
-- ✅ Sector Analysis
-- ✅ Capital Allocation Dashboard
-- ✅ Reports Dashboard
-- ✅ Valuation Module
-- ✅ README Documentation
-
----
-
 ## Author
 
 **Pavan Kumar Katkuri**
 
-Bluestock Data Analysis Internship  
+Bluestock Data Analysis Internship
 Nifty100 Financial Intelligence Platform
