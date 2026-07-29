@@ -5,12 +5,12 @@ import plotly.express as px
 
 sys.path.append(os.path.abspath("src"))
 
-import dashboard.utils.db as db
+import dashboard.utils.db_old as db_old
 
 st.title("📈 Trend Analysis")
 
-companies = db.get_companies()
-pl = db.get_pl()
+companies = db_old.get_companies()
+pl = db_old.get_pl()
 
 company = st.selectbox(
     "Select Company",

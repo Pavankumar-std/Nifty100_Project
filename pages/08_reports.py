@@ -6,28 +6,20 @@ sys.path.append(os.path.abspath("src"))
 
 import dashboard.utils.db as db
 
-st.title("📄 Annual Reports")
+st.title("📑 Reports")
 
 companies = db.get_companies()
 
 company = st.selectbox(
     "Company",
-    companies["company_name"]
+    sorted(companies["company_name"])
 )
 
-selected = companies[
-    companies["company_name"] == company
-].iloc[0]
+st.success("Annual Reports Module Ready")
 
-st.write("### Company Details")
+st.info("Report links will be integrated in Sprint 5.")
 
-st.write(selected)
-
-csv = companies.to_csv(index=False).encode()
-
-st.download_button(
-    "Download Company List",
-    csv,
-    "companies.csv",
-    "text/csv"
+st.dataframe(
+    companies[["company_name"]].head(20),
+    use_container_width=True
 )

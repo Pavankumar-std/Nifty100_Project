@@ -1,27 +1,26 @@
 import streamlit as st
+import plotly.express as px
 import sys
 import os
-import plotly.express as px
 
 sys.path.append(os.path.abspath("src"))
 
 import dashboard.utils.db as db
 
-bs = db.get_bs()
-
 st.title("💰 Capital Allocation")
 
-numeric = bs.select_dtypes(include="number").columns
+bs = db.get_bs()
 
-if len(numeric) >= 2:
+st.metric("Records", len(bs))
 
-    fig = px.scatter(
-        bs,
-        x=numeric[0],
-        y=numeric[1],
-        title="Capital Allocation"
+numeric = bs.select_dtypes(include="number")
+
+st.dataframe(bs.head(), use_container_width=True)
+
+if len(numeric.columns) > 0:
+    fig = px.box(
+        numeric,
+        title="Balance Sheet Metrics"
     )
 
     st.plotly_chart(fig, use_container_width=True)
-
-st.dataframe(bs)

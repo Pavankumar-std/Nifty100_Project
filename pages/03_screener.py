@@ -4,12 +4,12 @@ import os
 
 sys.path.append(os.path.abspath("src"))
 
-import dashboard.utils.db as db
+import dashboard.utils.db_old as db_old
 
 st.title("📊 Stock Screener")
 
-ratios = db.get_ratios()
-companies = db.get_companies()
+ratios = db_old.get_ratios()
+companies = db_old.get_companies()
 
 # --------------------
 # Sidebar Filters

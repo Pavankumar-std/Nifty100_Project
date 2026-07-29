@@ -1,52 +1,56 @@
 import streamlit as st
+import plotly.express as px
 import sys
 import os
-import plotly.express as px
 
 sys.path.append(os.path.abspath("src"))
 
 import dashboard.utils.db as db
 
-st.title("🤝 Peer Comparison")
+st.title("👥 Peer Comparison")
 
+peer = db.get_peers()
 companies = db.get_companies()
-ratios = db.get_ratios()
-peers = db.get_peers()
 
-company = st.selectbox(
-    "Select Company",
-    companies["company_name"].sort_values()
+groups = sorted(peer["peer_group"].unique())
+
+selected_group = st.selectbox(
+    "Select Peer Group",
+    groups
 )
 
-ticker = companies.loc[
-    companies["company_name"] == company,
-    "id"
-].iloc[0]
+peer_df = peer[
+    peer["peer_group"] == selected_group
+]
 
-company_ratio = ratios[
-    ratios["company_id"] == ticker
-].sort_values("year")
+st.metric("Companies", len(peer_df))
 
-if len(company_ratio) > 0:
-
-    latest = company_ratio.iloc[-1]
-
-    chart = px.bar(
-        x=["ROE","ROCE","Debt/Equity","Interest Coverage"],
-        y=[
-            latest["roe"],
-            latest["roce"],
-            latest["debt_to_equity"],
-            latest["interest_coverage"]
-        ],
-        title="Company Financial Metrics"
-    )
-
-    st.plotly_chart(chart, use_container_width=True)
-
-st.subheader("Peer Group")
+table = peer_df.merge(
+    companies,
+    left_on="company_id",
+    right_on="id",
+    how="left"
+)
 
 st.dataframe(
-    peers.head(20),
+    table[
+        [
+            "company_name",
+            "company_id",
+            "benchmark"
+        ]
+    ],
+    use_container_width=True
+)
+
+fig = px.bar(
+    table,
+    x="company_name",
+    y="benchmark",
+    title=f"{selected_group} Companies"
+)
+
+st.plotly_chart(
+    fig,
     use_container_width=True
 )

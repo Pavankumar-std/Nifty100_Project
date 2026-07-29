@@ -1,94 +1,88 @@
 import streamlit as st
+import plotly.express as px
 import sys
 import os
 
 sys.path.append(os.path.abspath("src"))
 
 import dashboard.utils.db as db
-import plotly.express as px
 
-st.title("🏠 Nifty100 Home Dashboard")
+st.title("🏠 Home Dashboard")
 
+# -----------------------
+# Load Data
+# -----------------------
 companies = db.get_companies()
 ratios = db.get_ratios()
-sectors = db.get_sectors()
 
-# -----------------------------
+# -----------------------
 # Sidebar
-# -----------------------------
-years = sorted(ratios["year"].unique())
-
-selected_year = st.sidebar.selectbox(
+# -----------------------
+year = st.sidebar.selectbox(
     "Select Year",
-    years,
-    index=len(years)-1
+    sorted(ratios["year"].unique(), reverse=True)
 )
 
-ratios = ratios[ratios["year"] == selected_year]
+ratios = ratios[ratios["year"] == year]
 
-# -----------------------------
+# -----------------------
 # KPIs
-# -----------------------------
-avg_roe = round(ratios["roe"].mean(),2)
-avg_roce = round(ratios["roce"].mean(),2)
-median_de = round(ratios["debt_to_equity"].median(),2)
-companies_count = len(companies)
+# -----------------------
+avg_roe = round(ratios["roe"].mean(), 2)
+avg_roce = round(ratios["roce"].mean(), 2)
+median_de = round(ratios["debt_to_equity"].median(), 2)
+total_companies = len(companies)
+debt_free = (ratios["debt_to_equity"] == 0).sum()
 
-c1,c2,c3,c4 = st.columns(4)
+c1, c2, c3, c4, c5 = st.columns(5)
 
-c1.metric("Average ROE",avg_roe)
-c2.metric("Average ROCE",avg_roce)
-c3.metric("Median D/E",median_de)
-c4.metric("Companies",companies_count)
+c1.metric("Average ROE", avg_roe)
+c2.metric("Average ROCE", avg_roce)
+c3.metric("Median D/E", median_de)
+c4.metric("Companies", total_companies)
+c5.metric("Debt Free", debt_free)
 
 st.divider()
 
-# -----------------------------
-# Sector Distribution
-# -----------------------------
-st.subheader("Sector Distribution")
-
-sector_col = sectors.columns[1]
+# -----------------------
+# Sector Chart
+# -----------------------
+sector_df = db.get_sectors()
 
 sector_counts = (
-    sectors[sector_col]
+    sector_df.iloc[:, 2]
     .value_counts()
     .reset_index()
 )
 
-sector_counts.columns=["Sector","Companies"]
+sector_counts.columns = ["Sector", "Count"]
 
 fig = px.pie(
     sector_counts,
     names="Sector",
-    values="Companies",
+    values="Count",
     hole=0.5,
-    title="Companies by Sector"
+    title="Sector Distribution"
 )
 
-st.plotly_chart(fig,use_container_width=True)
+st.plotly_chart(fig, use_container_width=True)
 
-# -----------------------------
-# Top ROE Companies
-# -----------------------------
-st.subheader("Top 5 Companies by ROE")
+st.divider()
 
-top = (
-    ratios.sort_values(
-        "roe",
-        ascending=False
-    )
-    .head(5)
-)
+st.subheader("🏆 Top 5 Companies by ROE")
 
-top = top.merge(
-    companies,
-    left_on="company_id",
-    right_on="id"
+top5 = (
+    ratios.sort_values("roe", ascending=False)
+          .head(5)
+          .merge(
+              companies,
+              left_on="company_id",
+              right_on="id"
+          )
 )
 
 st.dataframe(
-    top[
+    top5[
         [
             "company_name",
             "roe",

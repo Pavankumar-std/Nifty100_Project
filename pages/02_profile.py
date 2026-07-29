@@ -1,7 +1,8 @@
 import streamlit as st
+import plotly.express as px
+import pandas as pd
 import sys
 import os
-import plotly.express as px
 
 sys.path.append(os.path.abspath("src"))
 
@@ -11,77 +12,102 @@ st.title("🏢 Company Profile")
 
 companies = db.get_companies()
 ratios = db.get_ratios()
+pl = db.get_pl()
 pros = db.get_pros()
-
+# --------------------
+# Company Selector
+# --------------------
 company = st.selectbox(
     "Select Company",
-    companies["company_name"].sort_values().unique()
+    sorted(companies["company_name"].unique())
 )
 
-company_row = companies[
+company_info = companies[
     companies["company_name"] == company
 ].iloc[0]
 
-ticker = company_row["id"]
+ticker = company_info["id"]
 
 st.success(f"Ticker : {ticker}")
 
-st.subheader("Company Details")
+# --------------------
+# Company Card
+# --------------------
+st.subheader(company)
 
-col1, col2 = st.columns(2)
+st.write(company_info["about_company"])
 
-with col1:
-    st.write("**Company** :", company_row["company_name"])
-    st.write("**Website** :", company_row.get("website", "N/A"))
-
-with col2:
-    st.write("**Face Value** :", company_row.get("face_value", "N/A"))
-    st.write("**Book Value** :", company_row.get("book_value", "N/A"))
-
-company_ratio = ratios[
+# --------------------
+# KPIs
+# --------------------
+ratio = ratios[
     ratios["company_id"] == ticker
+].sort_values("year").iloc[-1]
+
+c1, c2, c3, c4, c5 = st.columns(5)
+
+c1.metric("ROE", round(ratio["roe"], 2))
+c2.metric("ROCE", round(ratio["roce"], 2))
+c3.metric("Debt/Equity", round(ratio["debt_to_equity"], 2))
+c4.metric("ROA", round(ratio["roa"], 2))
+c5.metric("Net Profit Margin", round(ratio["net_profit_margin"], 2))
+# --------------------
+# Revenue Chart
+# --------------------
+company_pl = pl[
+    pl["company_id"] == ticker
 ].sort_values("year")
 
-if len(company_ratio) > 0:
+fig = px.bar(
+    company_pl,
+    x="year",
+    y="sales",
+    title="Revenue Trend"
+)
 
-    c1, c2, c3 = st.columns(3)
+st.plotly_chart(
+    fig,
+    use_container_width=True
+)
 
-    c1.metric(
-        "ROE",
-        round(company_ratio.iloc[-1]["roe"], 2)
-    )
+st.subheader("ROE vs ROCE Trend")
 
-    c2.metric(
-        "ROCE",
-        round(company_ratio.iloc[-1]["roce"], 2)
-    )
+fig2 = px.line(
+    company_pl.merge(
+        ratios,
+        on=["company_id", "year"]
+    ),
+    x="year",
+    y=["roe", "roce"],
+    markers=True
+)
 
-    c3.metric(
-        "Debt/Equity",
-        round(company_ratio.iloc[-1]["debt_to_equity"], 2)
-    )
+st.plotly_chart(
+    fig2,
+    use_container_width=True
+)
 
-    fig = px.line(
-        company_ratio,
-        x="year",
-        y=["roe", "roce"],
-        markers=True,
-        title="ROE vs ROCE"
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
-
-st.subheader("Pros & Cons")
+st.subheader("✅ Pros & Cons")
 
 try:
-    company_pros = pros[
-        pros["company_id"] == ticker
-    ]
+    company_pros = pros[pros["company_id"] == ticker]
 
-    st.dataframe(
-        company_pros,
-        use_container_width=True
-    )
+    if len(company_pros) > 0:
+        st.success("Pros")
+
+        for i in company_pros.columns:
+            if "pro" in i.lower():
+                value = company_pros.iloc[0][i]
+                if pd.notna(value):
+                    st.write("✅", value)
+
+        st.error("Cons")
+
+        for i in company_pros.columns:
+            if "con" in i.lower():
+                value = company_pros.iloc[0][i]
+                if pd.notna(value):
+                    st.write("❌", value)
 
 except:
-    st.info("Pros & Cons data not available.")
+    st.info("No Pros & Cons available.")

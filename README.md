@@ -10,12 +10,12 @@ A financial analytics platform developed as part of the **Bluestock Data Analysi
 - SQLite database integration
 - Financial ratio calculation and analysis
 - Interactive Streamlit dashboard (8 modules)
-- Financial screener with preset and custom filters
+- Financial screener with custom filters
 - Company profile and trend analysis
 - Peer comparison dashboard
 - Sector analysis
 - Capital allocation analysis
-- Valuation module with valuation flags
+- Valuation module
 - CSV and Excel report generation
 - Automated testing using Pytest
 
@@ -23,7 +23,7 @@ A financial analytics platform developed as part of the **Bluestock Data Analysi
 
 ## Project Structure
 
-```
+```text
 Nifty100_Project/
 │
 ├── config/
@@ -37,7 +37,8 @@ Nifty100_Project/
 │   ├── analytics/
 │   ├── dashboard/
 │   ├── etl/
-│   └── screener/
+│   ├── screener/
+│   └── utils/
 ├── tests/
 ├── requirements.txt
 ├── README.md
@@ -49,10 +50,10 @@ Nifty100_Project/
 ## Technologies Used
 
 - Python
+- Streamlit
 - Pandas
 - NumPy
 - SQLite
-- Streamlit
 - Plotly
 - Matplotlib
 - OpenPyXL
@@ -63,24 +64,23 @@ Nifty100_Project/
 
 ## Dashboard Modules
 
-- Home Dashboard
-- Company Profile
-- Stock Screener
-- Peer Comparison
-- Trend Analysis
-- Sector Analysis
-- Capital Allocation
-- Reports
+- 🏠 Home Dashboard
+- 🏢 Company Profile
+- 📊 Stock Screener
+- 👥 Peer Comparison
+- 📈 Trend Analysis
+- 🏭 Sector Analysis
+- 💰 Capital Allocation
+- 📑 Reports
 
 ---
 
-## Outputs Generated
+## Outputs
 
-- `output/screener_output.xlsx`
-- `output/peer_comparison.xlsx`
+- `output/screener_output.csv`
 - `output/valuation_summary.xlsx`
 - `output/valuation_flags.csv`
-- SQLite database (`db/nifty100.db`)
+- SQLite Database: `db/nifty100.db`
 
 ---
 
@@ -92,7 +92,7 @@ streamlit run app.py
 
 ---
 
-## Run the Valuation Module
+## Run Valuation Module
 
 ```bash
 python src/analytics/valuation.py
@@ -108,10 +108,26 @@ python -m pytest
 
 ---
 
+## Sprint 4 Deliverables
+
+- ✅ Multi-page Streamlit Dashboard
+- ✅ SQLite Database Integration
+- ✅ Financial Ratio Analytics
+- ✅ Company Profile Dashboard
+- ✅ Stock Screener
+- ✅ Peer Comparison
+- ✅ Trend Analysis
+- ✅ Sector Analysis
+- ✅ Capital Allocation Dashboard
+- ✅ Reports Dashboard
+- ✅ Valuation Module
+- ✅ README Documentation
+
+---
+
 ## Author
 
 **Pavan Kumar Katkuri**
 
-
-Bluestock Data Analysis Internship – Nifty100 Financial Intelligence Platform
-
+Bluestock Data Analysis Internship  
+Nifty100 Financial Intelligence Platform
