@@ -1,97 +1,100 @@
 import streamlit as st
 import sys
 import os
-import plotly.express as px
 
 sys.path.append(os.path.abspath("src"))
 
 import dashboard.utils.db as db
+import plotly.express as px
 
-# -------------------------------
-# PAGE TITLE
-# -------------------------------
-st.title("🏠 Home Dashboard")
+st.title("🏠 Nifty100 Home Dashboard")
 
-# -------------------------------
-# LOAD DATA
-# -------------------------------
 companies = db.get_companies()
 ratios = db.get_ratios()
 sectors = db.get_sectors()
 
-# Rename sector columns (your database imported headers incorrectly)
-sectors.columns = [
-    "company_id",
-    "company_name",
-    "sector",
-    "sub_sector",
-    "weight",
-    "market_cap"
-]
+# -----------------------------
+# Sidebar
+# -----------------------------
+years = sorted(ratios["year"].unique())
 
-# -------------------------------
-# KPI CALCULATIONS
-# -------------------------------
-avg_roe = round(ratios["roe"].mean(), 2)
-avg_roce = round(ratios["roce"].mean(), 2)
-median_de = round(ratios["debt_to_equity"].median(), 2)
-debt_free = (ratios["debt_to_equity"] == 0).sum()
+selected_year = st.sidebar.selectbox(
+    "Select Year",
+    years,
+    index=len(years)-1
+)
 
-# -------------------------------
-# KPI CARDS
-# -------------------------------
-c1, c2, c3, c4 = st.columns(4)
+ratios = ratios[ratios["year"] == selected_year]
 
-c1.metric("Average ROE", avg_roe)
-c2.metric("Average ROCE", avg_roce)
-c3.metric("Median D/E", median_de)
-c4.metric("Debt Free Companies", debt_free)
+# -----------------------------
+# KPIs
+# -----------------------------
+avg_roe = round(ratios["roe"].mean(),2)
+avg_roce = round(ratios["roce"].mean(),2)
+median_de = round(ratios["debt_to_equity"].median(),2)
+companies_count = len(companies)
+
+c1,c2,c3,c4 = st.columns(4)
+
+c1.metric("Average ROE",avg_roe)
+c2.metric("Average ROCE",avg_roce)
+c3.metric("Median D/E",median_de)
+c4.metric("Companies",companies_count)
 
 st.divider()
 
-# -------------------------------
-# SECTOR DISTRIBUTION
-# -------------------------------
-st.subheader("📊 Sector Distribution")
+# -----------------------------
+# Sector Distribution
+# -----------------------------
+st.subheader("Sector Distribution")
 
-sector_count = (
-    sectors["sector"]
+sector_col = sectors.columns[1]
+
+sector_counts = (
+    sectors[sector_col]
     .value_counts()
     .reset_index()
 )
 
-sector_count.columns = ["Sector", "Companies"]
+sector_counts.columns=["Sector","Companies"]
 
 fig = px.pie(
-    sector_count,
+    sector_counts,
     names="Sector",
     values="Companies",
-    hole=0.45,
+    hole=0.5,
     title="Companies by Sector"
 )
 
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig,use_container_width=True)
 
-st.divider()
+# -----------------------------
+# Top ROE Companies
+# -----------------------------
+st.subheader("Top 5 Companies by ROE")
 
-# -------------------------------
-# TOP COMPANIES
-# -------------------------------
-st.subheader("🏆 Top Companies")
-
-st.dataframe(
-    companies[["company_name"]].head(10),
-    use_container_width=True
+top = (
+    ratios.sort_values(
+        "roe",
+        ascending=False
+    )
+    .head(5)
 )
 
-st.divider()
-
-# -------------------------------
-# FINANCIAL RATIOS
-# -------------------------------
-st.subheader("📈 Financial Ratios")
+top = top.merge(
+    companies,
+    left_on="company_id",
+    right_on="id"
+)
 
 st.dataframe(
-    ratios.head(10),
+    top[
+        [
+            "company_name",
+            "roe",
+            "roce",
+            "debt_to_equity"
+        ]
+    ],
     use_container_width=True
 )

@@ -8,79 +8,34 @@ import dashboard.utils.db as db
 
 st.title("📊 Stock Screener")
 
-# -----------------------------
-# Load Data
-# -----------------------------
 ratios = db.get_ratios()
 companies = db.get_companies()
 
-# -----------------------------
-# Sidebar Presets
-# -----------------------------
-st.sidebar.header("📌 Preset Filters")
+# --------------------
+# Sidebar Filters
+# --------------------
+st.sidebar.header("Filter Companies")
 
-preset = st.sidebar.selectbox(
-    "Choose Preset",
-    [
-        "Custom",
-        "Quality",
-        "Value",
-        "Growth"
-    ]
-)
+roe = st.sidebar.slider("Minimum ROE", 0, 100, 15)
+roce = st.sidebar.slider("Minimum ROCE", 0, 100, 15)
+de = st.sidebar.slider("Maximum Debt/Equity", 0.0, 5.0, 1.0)
+icr = st.sidebar.slider("Minimum Interest Coverage", 0.0, 20.0, 2.0)
 
-if preset == "Quality":
-    roe = 15
-    de = 1.0
-
-elif preset == "Value":
-    roe = 10
-    de = 2.0
-
-elif preset == "Growth":
-    roe = 20
-    de = 1.5
-
-else:
-    roe = st.sidebar.slider(
-        "Minimum ROE",
-        0,
-        100,
-        15
-    )
-
-    de = st.sidebar.slider(
-        "Maximum Debt / Equity",
-        0.0,
-        5.0,
-        1.0
-    )
-
-# -----------------------------
-# Apply Filters
-# -----------------------------
 filtered = ratios[
     (ratios["roe"] >= roe) &
-    (ratios["debt_to_equity"] <= de)
+    (ratios["roce"] >= roce) &
+    (ratios["debt_to_equity"] <= de) &
+    (ratios["interest_coverage"] >= icr)
 ]
 
-# -----------------------------
-# Merge Company Details
-# -----------------------------
 result = filtered.merge(
     companies,
     left_on="company_id",
     right_on="id"
 )
 
-# -----------------------------
-# Result Count
-# -----------------------------
-st.success(f"✅ {len(result)} Companies Match Your Filters")
+st.success(f"{len(result)} Companies Found")
 
-# -----------------------------
-# Results Table
-# -----------------------------
 st.dataframe(
     result[
         [
@@ -88,34 +43,18 @@ st.dataframe(
             "company_id",
             "roe",
             "roce",
-            "debt_to_equity"
+            "debt_to_equity",
+            "interest_coverage"
         ]
     ],
-    use_container_width=True,
-    hide_index=True
+    use_container_width=True
 )
 
-# -----------------------------
-# Download CSV
-# -----------------------------
 csv = result.to_csv(index=False).encode("utf-8")
 
 st.download_button(
-    label="📥 Download Screener Results",
-    data=csv,
-    file_name="screener_output.csv",
-    mime="text/csv"
+    "📥 Download CSV",
+    csv,
+    "screener_output.csv",
+    "text/csv"
 )
-
-# -----------------------------
-# Filter Summary
-# -----------------------------
-st.divider()
-
-st.subheader("📋 Current Filter Summary")
-
-c1, c2 = st.columns(2)
-
-c1.metric("Minimum ROE", roe)
-
-c2.metric("Maximum D/E", de)

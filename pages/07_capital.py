@@ -1,22 +1,27 @@
 import streamlit as st
 import sys
 import os
+import plotly.express as px
 
 sys.path.append(os.path.abspath("src"))
 
 import dashboard.utils.db as db
 
+bs = db.get_bs()
+
 st.title("💰 Capital Allocation")
 
-bs = db.get_bs()
-cf = db.get_cf()
+numeric = bs.select_dtypes(include="number").columns
 
-c1, c2 = st.columns(2)
+if len(numeric) >= 2:
 
-with c1:
-    st.subheader("Balance Sheet")
-    st.dataframe(bs.head(10), use_container_width=True)
+    fig = px.scatter(
+        bs,
+        x=numeric[0],
+        y=numeric[1],
+        title="Capital Allocation"
+    )
 
-with c2:
-    st.subheader("Cash Flow")
-    st.dataframe(cf.head(10), use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True)
+
+st.dataframe(bs)

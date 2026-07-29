@@ -1,6 +1,7 @@
 import streamlit as st
 import sys
 import os
+import plotly.express as px
 
 sys.path.append(os.path.abspath("src"))
 
@@ -10,18 +11,19 @@ st.title("🏭 Sector Analysis")
 
 sectors = db.get_sectors()
 
-st.subheader("Sector Dataset")
-
-st.dataframe(
-    sectors,
-    use_container_width=True,
-    hide_index=True
-)
-
-st.subheader("Companies by Sector")
-
 sector_col = sectors.columns[1]
 
-counts = sectors[sector_col].value_counts()
+counts = sectors[sector_col].value_counts().reset_index()
 
-st.bar_chart(counts)
+counts.columns = ["Sector", "Companies"]
+
+fig = px.bar(
+    counts,
+    x="Sector",
+    y="Companies",
+    title="Companies by Sector"
+)
+
+st.plotly_chart(fig, use_container_width=True)
+
+st.dataframe(sectors)

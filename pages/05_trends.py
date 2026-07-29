@@ -1,11 +1,11 @@
 import streamlit as st
 import sys
 import os
+import plotly.express as px
 
 sys.path.append(os.path.abspath("src"))
 
 import dashboard.utils.db as db
-import pandas as pd
 
 st.title("📈 Trend Analysis")
 
@@ -14,35 +14,37 @@ pl = db.get_pl()
 
 company = st.selectbox(
     "Select Company",
-    companies["company_name"]
+    companies["company_name"].sort_values()
 )
 
-selected = companies[
-    companies["company_name"] == company
-]
+ticker = companies.loc[
+    companies["company_name"] == company,
+    "id"
+].iloc[0]
 
-ticker = selected.iloc[0]["id"]
-
-st.write("Ticker:", ticker)
-
-# Filter Profit/Loss data
-trend = pl[
+company_pl = pl[
     pl["company_id"] == ticker
-]
+].sort_values("year")
 
-if len(trend) > 0:
-    st.subheader("Financial Trend")
+if len(company_pl):
 
-    st.line_chart(
-        trend.select_dtypes(
-            include="number"
-        )
+    numeric = company_pl.select_dtypes(include="number").columns.tolist()
+
+    metric = st.selectbox(
+        "Select Metric",
+        numeric
     )
 
-    st.dataframe(
-        trend,
-        use_container_width=True
+    fig = px.line(
+        company_pl,
+        x="year",
+        y=metric,
+        markers=True,
+        title=f"{metric} Trend"
     )
 
+    st.plotly_chart(fig, use_container_width=True)
+
+    st.dataframe(company_pl)
 else:
-    st.warning("No trend data available")
+    st.warning("No Data Found")

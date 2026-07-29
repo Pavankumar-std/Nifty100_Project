@@ -1,6 +1,7 @@
 import streamlit as st
 import sys
 import os
+import plotly.express as px
 
 sys.path.append(os.path.abspath("src"))
 
@@ -8,39 +9,44 @@ import dashboard.utils.db as db
 
 st.title("🤝 Peer Comparison")
 
+companies = db.get_companies()
+ratios = db.get_ratios()
 peers = db.get_peers()
 
-# Peer Group Dropdown
-peer_groups = sorted(peers["peer_group"].dropna().unique())
-
-selected_group = st.selectbox(
-    "Select Peer Group",
-    peer_groups
+company = st.selectbox(
+    "Select Company",
+    companies["company_name"].sort_values()
 )
 
-# Filter Data
-result = peers[
-    peers["peer_group"] == selected_group
-]
+ticker = companies.loc[
+    companies["company_name"] == company,
+    "id"
+].iloc[0]
 
-st.success(f"{len(result)} Companies in {selected_group}")
+company_ratio = ratios[
+    ratios["company_id"] == ticker
+].sort_values("year")
 
-# Show Table
+if len(company_ratio) > 0:
+
+    latest = company_ratio.iloc[-1]
+
+    chart = px.bar(
+        x=["ROE","ROCE","Debt/Equity","Interest Coverage"],
+        y=[
+            latest["roe"],
+            latest["roce"],
+            latest["debt_to_equity"],
+            latest["interest_coverage"]
+        ],
+        title="Company Financial Metrics"
+    )
+
+    st.plotly_chart(chart, use_container_width=True)
+
+st.subheader("Peer Group")
+
 st.dataframe(
-    result,
-    use_container_width=True,
-    hide_index=True
+    peers.head(20),
+    use_container_width=True
 )
-
-# Benchmark Company
-st.subheader("⭐ Benchmark Company")
-
-benchmark = result[result["benchmark"] == "T"]
-
-if benchmark.empty:
-    benchmark = result[result["benchmark"] == 1]
-
-if not benchmark.empty:
-    st.success(f"Benchmark Company: {benchmark.iloc[0]['company_id']}")
-else:
-    st.info("No benchmark company found.")
