@@ -35,14 +35,29 @@ def get_companies():
 def get_ratios(ticker=None, year=None):
     df = load_table("financial_ratios")
 
+    # Clean year values
+    df["year"] = df["year"].astype(str).str.strip()
+
+    # Convert numeric columns
+    numeric_cols = [
+        "roe",
+        "roce",
+        "debt_to_equity",
+        "net_profit_margin",
+        "operating_profit_margin"
+    ]
+
+    for col in numeric_cols:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="coerce")
+
     if ticker is not None:
         df = df[df["company_id"] == ticker]
 
     if year is not None:
-        df = df[df["year"] == year]
+        df = df[df["year"] == str(year).strip()]
 
     return df
-
 
 # -----------------------------
 # Profit & Loss

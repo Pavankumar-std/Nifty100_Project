@@ -2,10 +2,16 @@ import streamlit as st
 import plotly.express as px
 import sys
 import os
+import pandas as pd
 
 sys.path.append(os.path.abspath("src"))
 
 import dashboard.utils.db as db
+
+st.set_page_config(
+    page_title="Nifty100 Analytics",
+    layout="wide"
+)
 
 st.title("🏠 Home Dashboard")
 
@@ -14,12 +20,24 @@ st.title("🏠 Home Dashboard")
 # -----------------------
 companies = db.get_companies()
 ratios = db.get_ratios()
-st.write(ratios["year"].unique())
+
+# Clean year column
+ratios["year"] = ratios["year"].astype(str).str.strip()
+
+# Convert numeric columns
+numeric_cols = ["roe", "roce", "debt_to_equity"]
+
+for col in numeric_cols:
+    if col in ratios.columns:
+        ratios[col] = pd.to_numeric(ratios[col], errors="coerce")
 
 # -----------------------
 # Sidebar
 # -----------------------
 years = sorted(ratios["year"].dropna().unique())
+
+if "TTM" in years:
+    years.remove("TTM")
 
 default_year = "Mar 2024" if "Mar 2024" in years else years[-1]
 
@@ -28,14 +46,8 @@ year = st.sidebar.selectbox(
     years,
     index=years.index(default_year)
 )
-st.write("Selected:", repr(year))
 
 ratios = ratios[ratios["year"] == year]
-st.write("Rows after filter:", len(ratios))
-st.write(ratios.head())
-st.write("Selected Year:", year)
-st.write(ratios.head())
-st.write(ratios[["roe","roce","debt_to_equity"]].describe())
 
 # -----------------------
 # KPIs
@@ -57,7 +69,7 @@ c5.metric("Debt Free", debt_free)
 st.divider()
 
 # -----------------------
-# Sector Chart
+# Sector Distribution
 # -----------------------
 sector_df = db.get_sectors()
 
@@ -81,16 +93,19 @@ st.plotly_chart(fig, use_container_width=True)
 
 st.divider()
 
+# -----------------------
+# Top 5 Companies by ROE
+# -----------------------
 st.subheader("🏆 Top 5 Companies by ROE")
 
 top5 = (
     ratios.sort_values("roe", ascending=False)
-          .head(5)
-          .merge(
-              companies,
-              left_on="company_id",
-              right_on="id"
-          )
+    .head(5)
+    .merge(
+        companies,
+        left_on="company_id",
+        right_on="id"
+    )
 )
 
 st.dataframe(
