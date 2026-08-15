@@ -1,27 +1,28 @@
-# 📈 Nifty100 Financial Intelligence Platform
+# Nifty100 Financial Intelligence Platform
 
-A complete financial analytics platform developed as part of the **Bluestock Data Analysis Internship**.
+A complete financial analytics platform developed during the **Bluestock Data Analysis Internship**.
 
-The project analyzes Nifty 100 companies using ETL pipelines, financial ratios, valuation analytics, cash flow intelligence, NLP-based insights, PDF report generation, and an interactive Streamlit dashboard.
+The project analyzes Nifty 100 companies using ETL pipelines, financial ratios, valuation models, cash flow intelligence, NLP-generated insights, PDF reports, and an interactive Streamlit dashboard.
 
 ---
 
-# 🚀 Features
+# Features
 
-- ETL Pipeline
+- ETL Data Pipeline
 - SQLite Database
 - Financial Ratio Engine
-- Interactive Streamlit Dashboard
-- Company Profile Analysis
+- 8-Page Streamlit Dashboard
+- Company Profile
 - Stock Screener
 - Peer Comparison
 - Trend Analysis
 - Sector Analysis
-- Capital Allocation Analysis
-- Valuation Module
+- Capital Allocation Dashboard
+- Annual Reports Viewer
+- Valuation Engine
 - Cash Flow Intelligence
-- NLP-Based Pros & Cons Generator
-- PDF Company Tearsheets
+- NLP Pros & Cons Generator
+- Company Tearsheet PDFs
 - Sector Reports
 - Portfolio Summary Report
 - CSV & Excel Export
@@ -29,7 +30,7 @@ The project analyzes Nifty 100 companies using ETL pipelines, financial ratios, 
 
 ---
 
-# 🛠 Technologies Used
+# Technologies Used
 
 - Python
 - Pandas
@@ -45,10 +46,11 @@ The project analyzes Nifty 100 companies using ETL pipelines, financial ratios, 
 
 ---
 
-# 📁 Project Structure
+# Project Structure
 
-```text
+```
 src/
+│
 ├── analytics/
 ├── dashboard/
 │   ├── app.py
@@ -56,45 +58,32 @@ src/
 ├── etl/
 ├── nlp/
 ├── reports/
-
+│
 pages/
-├── 01_home.py
-├── 02_profile.py
-├── 03_screener.py
-├── 04_peers.py
-├── 05_trends.py
-├── 06_sectors.py
-├── 07_capital.py
-└── 08_reports.py
-
+│
 output/
-reports/
+│
 db/
+│
+reports/
 ```
 
 ---
 
-# 📊 Dashboard Modules
+# Dashboard Modules
 
-- 🏠 Home Dashboard
-- 📋 Company Profile
-- 🔍 Stock Screener
-- 👥 Peer Comparison
-- 📈 Trend Analysis
-- 🏭 Sector Analysis
-- 💰 Capital Allocation
-- 📄 Reports
-
----
-
-# 🤖 NLP Modules
-
-- Analysis Text Parser
-- Auto Pros & Cons Generator
+- Home Dashboard
+- Company Profile
+- Stock Screener
+- Peer Comparison
+- Trend Analysis
+- Sector Analysis
+- Capital Allocation
+- Reports
 
 ---
 
-# 📉 Analytics Modules
+# Analytics Modules
 
 - Financial Ratio Engine
 - Valuation Engine
@@ -103,15 +92,22 @@ db/
 
 ---
 
-# 📄 Report Generation
+# NLP Modules
 
-- Company Tearsheets (92 PDFs)
-- Sector Reports (11 PDFs)
-- Portfolio Summary PDF
+- Analysis Text Parser
+- Auto Pros & Cons Generator
 
 ---
 
-# 📦 Generated Outputs
+# Report Modules
+
+- Company Tearsheet PDF
+- Sector Reports
+- Portfolio Summary Report
+
+---
+
+# Output Files
 
 - analysis_parsed.csv
 - parse_failures.csv
@@ -125,7 +121,7 @@ db/
 
 ---
 
-# ▶️ Run Dashboard
+# Run Dashboard
 
 ```bash
 streamlit run src/dashboard/app.py
@@ -133,36 +129,39 @@ streamlit run src/dashboard/app.py
 
 ---
 
-# 📈 Run Analytics
+# Run Analytics
 
 ```bash
 python src/analytics/valuation.py
+
 python src/analytics/cashflow_kpis.py
-python src/analytics/capital_allocation_report.py
 ```
 
 ---
 
-# 🤖 Run NLP
+# Run NLP
 
 ```bash
 python src/nlp/parser.py
+
 python src/nlp/pros_cons_generator.py
 ```
 
 ---
 
-# 📄 Generate Reports
+# Run Reports
 
 ```bash
 python src/reports/tearsheet.py
+
 python src/reports/sector_report.py
+
 python src/reports/portfolio_report.py
 ```
 
 ---
 
-# ✅ Run Tests
+# Run Tests
 
 ```bash
 python -m pytest
@@ -170,7 +169,22 @@ python -m pytest
 
 ---
 
-# 👨‍💻 Author
+# Project Highlights
+
+- Interactive Streamlit Dashboard
+- 92 Nifty100 Companies
+- Financial Ratio Analysis
+- Stock Screening
+- Company Valuation
+- Cash Flow Intelligence
+- NLP-Based Insights
+- PDF Report Generation
+- SQLite Database
+- Automated Analytics Pipeline
+
+---
+
+# Author
 
 **Pavan Kumar Katkuri**
 
