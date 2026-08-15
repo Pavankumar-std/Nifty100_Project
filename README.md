@@ -2,7 +2,7 @@
 
 A complete financial analytics platform developed during the **Bluestock Data Analysis Internship**.
 
-The project analyzes Nifty 100 companies using ETL pipelines, financial ratios, valuation models, cash flow intelligence, NLP-generated insights, PDF reports, and an interactive Streamlit dashboard.
+The project analyzes Nifty 100 companies using ETL pipelines, financial ratios, valuation models, cash flow intelligence, clustering, NLP-generated insights, PDF reports, a Streamlit dashboard, and a FastAPI-based Financial Intelligence API.
 
 ---
 
@@ -11,6 +11,7 @@ The project analyzes Nifty 100 companies using ETL pipelines, financial ratios, 
 - ETL Data Pipeline
 - SQLite Database
 - Financial Ratio Engine
+- KMeans Company Clustering
 - 8-Page Streamlit Dashboard
 - Company Profile
 - Stock Screener
@@ -26,6 +27,11 @@ The project analyzes Nifty 100 companies using ETL pipelines, financial ratios, 
 - Sector Reports
 - Portfolio Summary Report
 - CSV & Excel Export
+- FastAPI Financial Intelligence API
+- Health Monitoring API
+- Company Search API
+- Financial Screener API
+- Sector-wise Analysis API
 - Automated Testing
 
 ---
@@ -35,7 +41,10 @@ The project analyzes Nifty 100 companies using ETL pipelines, financial ratios, 
 - Python
 - Pandas
 - NumPy
+- Scikit-learn
 - SQLite
+- FastAPI
+- Uvicorn
 - Streamlit
 - Plotly
 - Matplotlib
@@ -48,24 +57,30 @@ The project analyzes Nifty 100 companies using ETL pipelines, financial ratios, 
 
 # Project Structure
 
-```
-src/
+```text
+Nifty100_Project/
 │
-├── analytics/
-├── dashboard/
-│   ├── app.py
-│   └── utils/
-├── etl/
-├── nlp/
+├── data/
+├── db/
+│   └── nifty100.db
+│
+├── src/
+│   ├── analytics/
+│   ├── api/
+│   │   ├── main.py
+│   │   └── routers/
+│   ├── dashboard/
+│   │   ├── app.py
+│   │   └── utils/
+│   ├── etl/
+│   ├── nlp/
+│   └── reports/
+│
+├── tests/
+├── output/
 ├── reports/
-│
-pages/
-│
-output/
-│
-db/
-│
-reports/
+├── requirements.txt
+└── README.md
 ```
 
 ---
@@ -89,6 +104,34 @@ reports/
 - Valuation Engine
 - Cash Flow Intelligence
 - Capital Allocation Analysis
+- CAGR Analysis
+- Company Clustering
+
+---
+
+# FastAPI Modules
+
+The project includes a REST API for accessing financial intelligence data.
+
+Available modules include:
+
+- Health API
+- Companies API
+- Stock Screener API
+- Sector Analysis API
+- Sector-wise Company API
+
+Run the API using:
+
+```bash
+uvicorn src.api.main:app --reload --port 8000
+```
+
+Open the API documentation:
+
+```text
+http://127.0.0.1:8000/docs
+```
 
 ---
 
@@ -133,8 +176,8 @@ streamlit run src/dashboard/app.py
 
 ```bash
 python src/analytics/valuation.py
-
 python src/analytics/cashflow_kpis.py
+python src/analytics/clustering.py
 ```
 
 ---
@@ -143,7 +186,6 @@ python src/analytics/cashflow_kpis.py
 
 ```bash
 python src/nlp/parser.py
-
 python src/nlp/pros_cons_generator.py
 ```
 
@@ -153,9 +195,7 @@ python src/nlp/pros_cons_generator.py
 
 ```bash
 python src/reports/tearsheet.py
-
 python src/reports/sector_report.py
-
 python src/reports/portfolio_report.py
 ```
 
@@ -163,24 +203,36 @@ python src/reports/portfolio_report.py
 
 # Run Tests
 
+Run the complete automated test suite:
+
 ```bash
-python -m pytest
+python -m pytest tests -v
 ```
+
+## Test Results
+
+**98 tests passed with 0 failures.**
 
 ---
 
 # Project Highlights
 
-- Interactive Streamlit Dashboard
 - 92 Nifty100 Companies
+- Interactive Streamlit Dashboard
+- FastAPI Financial Intelligence API
 - Financial Ratio Analysis
 - Stock Screening
 - Company Valuation
 - Cash Flow Intelligence
+- CAGR Analysis
+- KMeans Company Clustering
+- Sector-wise Analysis
 - NLP-Based Insights
 - PDF Report Generation
 - SQLite Database
-- Automated Analytics Pipeline
+- Automated ETL Pipeline
+- Comprehensive Automated Testing
+- **98 Tests Passed**
 
 ---
 
@@ -190,4 +242,4 @@ python -m pytest
 
 Bluestock Data Analysis Internship
 
-Nifty100 Financial Intelligence Platform
+**Nifty100 Financial Intelligence Platform**
